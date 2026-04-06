@@ -1,0 +1,494 @@
+\documentclass{beamer}
+
+% Theme Selection
+\usetheme{Madrid}
+\usecolortheme{beaver}
+% \usefonttheme{serif}
+\usefonttheme{professionalfonts}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{graphicx,listings,bm}
+\usepackage{latexsym,amssymb,amsfonts,amsmath,xcolor,multicol,booktabs,calligra,braket}
+\usepackage{color}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{minted} % For code highlighting
+\usepackage{xcolor} % Optional: For defining custom colors
+\usepackage{array}
+\usepackage{forest}
+\usepackage{Ritsumeikan}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{tikzmark, arrows.meta}
+\usepackage[square,sort,comma,numbers]{natbib}
+\setbeamertemplate{navigation symbols}{}
+
+% Title Information
+\title[Quantum Chaotic Dynamics]{Explanation of Quantum Chaotic Dynamics in Matrix Gauge Theories}
+\subtitle{PhD Thesis Committee Report}
+\author[Berk Özcan]{Berk Özcan \\ \small Supervisor: Prof. Dr. Seçkin Kürkçüoğlu}
+\institute[METU]{Middle East Technical University \\ Department of Physics}
+\date{May 2024 - May 2027}
+
+\begin{document}
+
+% Slide 1: Title
+\frame{\titlepage}
+
+% Slide 2: Outline
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+% Section 1: Introduction
+\section{Introduction \& Motivation}
+
+\begin{frame}{Motivation}
+    \begin{itemize}
+        \item \textbf{Gauge-Gravity Duality:} Connections established between chaotic systems and black hole physics have motivated research into chaotic dynamics in quantum systems.
+        \item \textbf{Measuring Chaos:}
+        \begin{itemize}
+            \item Classical: Lyapunov exponents (exponential divergence of trajectories).
+             % 
+            \item Quantum: Out-of-Time-Ordered Correlators (OTOCs) where $C(t) \sim e^{2\lambda_L t}$.
+        \end{itemize}
+        \item \textbf{The MSS Bound:} Maldacena, Shenker, and Stanford suggested a universal upper bound on quantum chaos:
+        \begin{equation*}
+            \lambda_L \le \frac{2\pi k_B T}{\hbar}
+        \end{equation*}
+        Black holes are expected to saturate this bound.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Thesis Goals}
+    \begin{block}{Primary Goal}
+        To study the quantum level dynamics, starting from near thermal equilibrium configurations in Bosonic Matrix (BM) models on Fuzzy 2-Spheres ($S_F^2 \times \mathbb{R}^1$).
+        % 
+    \end{block}
+
+    \begin{block}{Specific Objectives}
+        \begin{enumerate}
+            \item Apply \textbf{Gaussian State Approximation (GSA)} to average Heisenberg equations of motion to obtain the equations of motion for the 1-point and 2-point correlators.
+            \item Solve the resulting truncated differential equations numerically.
+            \item Calculate the \textbf{Largest Lyapunov Exponent ($\lambda_L$)} to determine chaotic behavior.
+            \item Investigate the relationship between $\lambda_L$, Energy, and Temperature to check the MSS bound.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+% Section 2: The Model
+\section{Model and Methods}
+
+\begin{frame}{Hamiltonian on $S_F^2 \times \mathbb{R}$}
+    The Hamiltonian for the matrix models considered is expressed as:
+    \begin{equation*}
+        \hat{H} = \frac{1}{2} Tr \left[ \hat{P}_i^2 + \mu^2 \hat{X}_i^2 - \frac{[L_a, \hat{X}_i]^2}{R^2} - \frac{\lambda}{2} \sum_{i \neq j} [\hat{X}_i, \hat{X}_j]^2 \right]
+    \end{equation*}
+   
+    \begin{itemize}
+        \item $\hat{X}_i$: $N \times N$ Hermitian matrices.
+        \item $\hat{P}_i$: $N \times N$ Hermitian conjugate momentum operators i.e. 
+        \begin{align*}
+            [\hat{X}_i, \hat{P}_j] = i\delta_{ij} \mathbb{I}_{N^2\times N^2}.
+        \end{align*}
+        \item $\mathcal{L}_a := [L_a, \cdot]$: Derivatives on $S_F^2$ satisfying $SU(2)$ algebra.
+        \item $L_a$: Spin $\frac{N-1}{2}$ IRR of $SU(2)$.
+    \end{itemize}
+    
+    The system exhibits $SU(2)$ symmetry and, when planar/non-planar terms are included, $SO(2)$ symmetry and $D_4$ when non-planar terms are excluded.
+\end{frame}
+
+\begin{frame}{Real Polarization Operator Basis}
+    To facilitate numerical solution, the Hamiltonian is expanded using the real polarization operator basis $Y_{lm}$:
+    \begin{equation*}
+        \hat{X}_i = \hat{X}_i^{lm} Y_{lm}, \quad \hat{P}_i = \hat{P}_i^{lm} Y_{lm}.
+    \end{equation*}
+    Which is given in terms of the Polarization Operator Basis $T_{lm}$ as:
+    \begin{equation*}
+    Y_{lm} = 
+    \begin{cases}
+      \frac{1}{\sqrt{2}} (T_{lm} + T_{lm}^\dagger) & \text{if } m > 0 \\
+        T_{l0} & \text{if } m = 0 \\
+        \frac{i}{\sqrt{2}} (T_{lm} - T_{lm}^\dagger) & \text{if } m < 0
+    \end{cases}, 
+    \end{equation*}
+    with the derivatives on $S_F^2$ given by:
+    \begin{equation*}
+      \mathcal{L}_3  Y_{lm} = [L_3, Y_{lm}] = m Y_{lm}
+    \end{equation*}
+    \begin{equation*}
+      \mathcal{L}^2  Y_{lm} = [L_a, [L_a, Y_{lm}]] = -[L_a, Y_{lm}]^2 = l(l+1) Y_{lm}
+    \end{equation*}
+   
+\end{frame}
+
+\begin{frame}
+  \frametitle{Hamiltonian in Real Polarization Operator Basis}
+
+    Using the real polarization operator basis in the Hamiltonian allows us to write it in terms of trace coefficients ($\mathcal{K}$ symbols):
+    \begin{align*}
+    H &= \frac{1}{2} \Bigg[\left(P_i^{lm}\right)^2 + \sum_{l=0}^{N-1} \left(\mu^2 + \frac{l(l+1)}{R^2} \right) \left(X_i^{lm}\right)^2 \nonumber \\ 
+    &+ \lambda \tikzmarknode{K}{\mathcal{K}}^{l_1 l_2 l_3 l_4}_{m_1 m_2 m_3 m_4} \left( X_1^{l_1 m_1} X_1^{l_2 m_2} X_2^{l_3 m_3} X_2^{l_4 m_4} - X_1^{l_1 m_1} X_2^{l_2 m_2} X_1^{l_3 m_3} X_2^{l_4 m_4}\right) \Bigg]
+    \end{align*}
+
+% The arrow and definition
+\begin{tikzpicture}[overlay, remember picture]
+    \draw [-stealth, shorten <=2pt, thick, bend right=25] 
+        (K.south) to ++(1.0,-1.0) 
+        node[right, font=\small, text width=3cm, align=left] {    
+        \begin{equation*}
+            Tr \left(Y_{l_1 m_1} Y_{l_2 m_2} Y_{l_3 m_3} Y_{l_4 m_4}\right) 
+        \end{equation*}};
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Heisenberg Equations of Motion}
+  We can compute the Heisenberg equations of motion using
+  \begin{equation*}
+    \dot{\xi}_{i}^{l_1 m_1} = i [H, \xi_{i}^{l_1 m_1}] \text{, with } [X_i^{l_1 m_1}, P_j^{l_2 m_2}] = i\delta_{ij} \delta^{l_1 l_2} \delta^{m_1 m_2}
+  \end{equation*}
+  This gives us the following equations of motion:
+    \begin{align*}
+        \dot{X}_{1}^{lm} &= P_{1}^{l m}, \;\dot{X}_{2}^{lm} = P_{2}^{l m},  \\
+        \dot{P}_1^{lm} &= -\left[\left(\mu^2 + \frac{l(l+1)}{R^2}\right) X_1^{l m} + \frac{\lambda}{2} \mathcal{N}^{l\; l_1 l_2 l_3}_{m\; m_1 m_2 m_3} X_1^{l_1 m_1} X_2^{l_2 m_2} X_2^{l_3 m_3}\right] \\
+        \dot{P}_2^{lm} &= -\left[\left(\mu^2 + \frac{l(l+1)}{R^2}\right) X_1^{l m} + \frac{\lambda}{2} \tikzmarknode{N}{\mathcal{N}}^{l\; l_1 l_2 l_3}_{m\; m_1 m_2 m_3} X_2^{l_1 m_1} X_1^{l_2 m_2} X_1^{l_3 m_3}\right].
+    \end{align*}
+
+ 
+    \begin{tikzpicture}[overlay, remember picture]
+        \draw [-stealth, 
+               shorten <=1pt, % Space from the symbol N
+               shorten >=-2pt, % Space before the Tr definitions (THIS IS WHAT YOU NEED)
+               thick] 
+            (N.south) -- ++(0.0,-0.4) % Vertical line down
+            node[below, % Positions text below the arrow tip
+                 font=\tiny, 
+                 text width=6cm, 
+                 align=center] {    
+            $\begin{aligned}
+                &\text{Tr}\left(Y_{l m} Y_{l_1 m_1} Y_{l_2 m_2} Y_{l_3 m_3}\right) + \text{Tr}\left(Y_{l_1 m_1} Y_{l m} Y_{l_2 m_2} Y_{l_3 m_3}\right)\\
+                 - &\text{Tr}\left(Y_{l m} Y_{l_2 m_2} Y_{l_1 m_1} Y_{l_3 m_3}\right) - \text{Tr}\left(Y_{l_1 m_1} Y_{l_2 m_2} Y_{l m} Y_{l_3 m_3}\right) 
+            \end{aligned}$};
+    \end{tikzpicture}
+  
+
+\end{frame}
+
+
+\begin{frame}{Gaussian State Approximation (GSA)}
+    To inspect the real time dynamics of the system, we use the Gaussian State Approximation (GSA) to average the Heisenberg equations of motion, using the following Wigner function of the Gaussian density matrix:
+    \begin{equation*}
+        W(\xi) = \mathcal{N} e^{-\frac{1}{2}(\xi - \braket{\xi})^T \Sigma^{-1} (\xi - \braket{\xi})}
+    \end{equation*}
+    where the covariance matrix is given by:
+    \begin{equation*}
+        \Sigma = \begin{pmatrix}
+            \braket{\braket{X_i^{lm} X_j^{l'm'}}} & \braket{\braket{X_i^{lm} P_j^{l'm'}}} \\
+            \braket{\braket{X_i^{lm} P_j^{l'm'}}} & \braket{\braket{P_i^{lm} P_j^{l'm'}}}
+        \end{pmatrix}
+    \end{equation*}
+    \begin{itemize}
+        \item \textbf{Wick's Theorem:} Used to express the equations of motion via 1-point and 2-point correlation functions.
+        \item \textbf{Result:} A coupled system of truncated differential equations for $\langle X \rangle$, $\langle P \rangle$, and correlators like $\langle XX \rangle$, $\langle XP \rangle$ and $\langle PP \rangle$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Gaussian Averaged EOM}
+    The equations of motion for the correlators are derived via Gaussian averaging. For example:
+    \begin{align*}
+        \partial_t \langle X_1^{lm} \rangle &= \langle P_1^{lm} \rangle \\
+        \partial_t \langle P_1^{lm} \rangle &= -\left[ \left(\mu^2 + \frac{l(l+1)}{R^2}\right) \langle X_1^{lm} \rangle + \frac{\lambda}{2} \mathcal{N} \dots \right]
+    \end{align*}
+    
+    The dynamics of the 2-point correlators (e.g., $\partial_t \langle \langle X X \rangle \rangle$) are similarly derived, recovering classical equations if 2-point correlators are zero.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Thermal States}
+    To construct the thermal states, we need to use the symmetries of the system to find the appropriate initial conditions.
+    \begin{itemize}
+        \item \textbf{Symmetry:} Parity and Time Reversal symmetry.
+        \item \textbf{Result:}
+        \begin{align*}
+            \langle X_1^{lm} \rangle = \langle X_2^{lm} \rangle = 0,\;\langle P_1^{lm} \rangle = \langle P_2^{lm} \rangle = 0,\;\braket{X_i^{lm} P_j^{l'm'}} = 0
+        \end{align*}
+        \item \textbf{Symmetry:} $SO(2)$ or $D_4$ symmetry.
+        \item \textbf{Result:}
+        \begin{align*}
+            \braket{X_i^{lm} X_j^{lm}} \sim \delta_{ij}
+        \end{align*}
+        \item \textbf{Symmetry:} $SU(2)$ symmetry.
+        \item \textbf{Result:}
+        \begin{align*}
+            \braket{X_i^{lm} X_j^{l'm'}} = \sigma_{xx}(l) \delta_{ij} \delta^{ll'} \delta^{mm'},\; \braket{P_i^{lm} P_j^{l'm'}} = \sigma_{pp}(l) \delta_{ij} \delta^{ll'} \delta^{mm'}
+        \end{align*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Entropy}
+    \begin{itemize}
+        \item von Neumann entropy for Gaussian density matrix can be written in terms of the symplectic eigenvalues.
+        \item Symplectic eigenvalues can be written using the eigenvalues of the $\Sigma \Omega$ matrix. ($\Omega$: Symplectic form of canonical coordinates.)
+        \item Eigenvalues of the matrix come in complex pairs $\lambda_{[k]} = \pm i f_{[k]}$, where the $f_{[k]}$ are the symplectic eigenvalues.
+    \end{itemize}
+    \begin{align*}
+        S &= \sum_{[k]} \left(f_{[k]} + \frac{1}{2}\right)\ln\left(f_{[k]} + \frac{1}{2}\right) - \sum_{[k]} \left(f_{[k]} - \frac{1}{2}\right)\ln\left(f_{[k]} - \frac{1}{2}\right), \\
+          &= \sum_{l} (2l+1)\left[ \left(f_{l} + \frac{1}{2}\right)\ln\left(f_{l} + \frac{1}{2}\right) - \left(f_{l} - \frac{1}{2}\right)\ln\left(f_{l} - \frac{1}{2}\right) \right]
+    \end{align*}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Symplectic Eigenvalues}
+    \begin{itemize}
+        \item Using these initial conditions we can write the entropy from the symplectic matrix
+    \end{itemize}
+    \fontsize{7pt}{11pt}\selectfont
+    \begin{align*}
+        (\Sigma \Omega)_{i j}^{[l m][l' m']} &= \Sigma_{i k}^{[l m][l'' m'']} \Omega_{k j}^{[l'' m''][l' m']} \nonumber \\
+        &= \begin{pmatrix}
+            \sigma_{xx}(l) \delta^{l l'} \delta^{m m'} \delta_{ik} & 0 \\[6pt]
+            0 & \sigma_{pp}(l) \delta^{l l'} \delta^{m m'} \delta_{ik}
+        \end{pmatrix} 
+        \begin{pmatrix}
+            0 & \delta^{l'' l'} \delta^{m'' m'} \delta_{kj} \\[6pt]
+            -\delta^{l'' l'} \delta^{m'' m'} \delta_{kj} & 0
+        \end{pmatrix} \nonumber \\
+        &= \begin{pmatrix}
+            0 & \sigma_{xx}(l) \delta^{l l'} \delta^{m m'} \delta_{ij} \\[6pt]
+            -\sigma_{pp}(l) \delta^{l l'} \delta^{m m'} \delta_{ij} & 0
+        \end{pmatrix}.
+    \end{align*}
+    \fontsize{9pt}{11pt}\selectfont
+    \begin{itemize}
+        \item The symplectic eigenvalues are then 
+    \end{itemize}
+    \begin{align*}
+        f_{[k]} = \pm \sqrt{\sigma_{xx}(l) \sigma_{pp}(l)}.
+    \end{align*}
+    \begin{itemize}
+        \item ${[k]} \equiv [i,l,m] = 1,2,\ldots,2N^2$. With only $N$ independent symplectic eigenvalues.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Energy}
+    The energy of the system is given by $E=\braket{H}$. If we use the initial conditions given previously, we get:
+    \begin{align*}
+        E = \sum_{l=0}^{N-1} (2l+1) \left( \sigma_{pp}(l) + \left(\mu^2 + \frac{l(l+1)}{R^2}\right) \sigma_{xx}(l) \right) + \frac{\lambda C^2}{2N}
+    \end{align*}
+    Here $C$ is 
+    \begin{equation*}
+        C := \sum_{l=0}^{N-1} (2l+1) \sigma_{xx}(l) =  \frac{\braket{\braket{Tr\left(X_i X_i\right)}}}{2}
+    \end{equation*}
+    
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Entropy Maximization}
+    We need to maximize the Entropy $S$ for a fixed energy $E$. We can use the method of Lagrange multipliers to find the maximum of 
+    \begin{equation*}
+        \mathcal{L} = S + \beta \left(E - E_0\right)
+    \end{equation*}
+    We can maximize the entropy by taking the derivative of $\mathcal{L}$ with respect to $\sigma_{xx}(l)$ and $\sigma_{pp}(l)$ and setting it to zero, we get:
+    \begin{equation*}
+        \frac{\sigma_{pp}(l)}{\sigma_{xx}(l)} = \frac{\omega_l}{N^2}
+    \end{equation*}
+    where $\omega_l := N \sqrt{\mu^2 + \frac{l(l+1)}{R^2} + \frac{\lambda C}{N}}$. We also have the symplectic eigenvalue equation:
+    \begin{equation*}
+        \sigma_{xx}(l) \sigma_{pp}(l) = f_l^2
+    \end{equation*}
+    which can be solved to give
+    \begin{equation*}
+        f_l = \frac{1}{2} coth \left(\frac{\beta \omega_l}{N}\right)
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{Consistency Equation}
+    Now we know that the symplectic eigenvalues for the maximum entropy state, all we have to do is to find the value of $C$ for a given $\beta$ and system parameters.
+    \begin{block}{Consistency Equation}
+        The relationship between the $C$ value and temperature $\beta$ is determined by solving:
+        \begin{equation*}
+             C = \frac{1}{2} \sum_{l=0}^{N-1} (2l+1) \frac{\coth(\beta \omega_l / N)}{\omega_l}
+        \end{equation*}
+        where $\omega_l$ depends on $\mu$, $R$, and $C$ itself.
+    \end{block}
+    Solving this equation allows us to exactly determine $f_l$ for a given $\beta$ and system parameters.
+\end{frame}
+
+\begin{frame}{Selecting Initial Conditions}
+    \begin{block}{Static Solution}
+        By plugging in the values $\sigma_{xx}(l) = \frac{N f_l}{\omega_l}$ and $\sigma_{pp}(l) = \frac{\omega_l f_l}{N}$ in our equations of motion, we can check the Thermal equilibrium is also the static solution of the system. 
+    \end{block}
+    Therefore, we need a way to choose initial conditions while also ensuring the system is dynamical. To do so, we can separate the variance into quantum and classical dispersions:
+    \begin{equation*}
+        \sigma_{\xi \xi}(l) = \sigma_{\xi \xi}^0(l) + \sigma_{\xi \xi}^c(l)
+    \end{equation*}
+   
+    \begin{itemize}
+        \item \textbf{Quantum Dispersion ($\sigma^0$):} Zero-temperature limit.
+        \item \textbf{Classical Dispersion ($\sigma^c$):} Difference between thermal and zero-temp limits.
+    \end{itemize}
+    One-point initial conditions are selected randomly from a Gaussian distribution with variance $\sigma^c$ to ensure the system is dynamical.
+\end{frame}
+\begin{frame}
+    \frametitle{Energy vs Temperature}
+        \begin{figure}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=0.99\linewidth]{figures/TvsE3.png}
+            \caption{\texttt{\small}$T$ values from $0.01$ to $10$}\label{fig:TESVXX}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=0.99\linewidth]{figures/TvsE4.png}
+            \caption{\texttt{\small}$T$ values from $0.01$ to $50$}\label{fig:TESVPP}
+        \end{subfigure}
+        \label{fig:TESV_two_point}
+        \caption{Energy vs Temperature for $N=3, R=0.5, \lambda=\frac{1}{N}, \mu=\frac{1}{2R}$.}
+        \end{figure}
+\end{frame}
+
+% Section 5: Computational Results
+\section{Computational Methods \& Results}
+
+\begin{frame}{Computational Methods}
+    \begin{itemize}
+        \item \textbf{Implementation:} C++ code structure involving \texttt{Analysis}, \texttt{Systems}, and \texttt{LyapunovAnalysis} modules.
+        \item \textbf{Integration Scheme:} Symplectic Euler Method.
+        \begin{itemize}
+            \item Preserves the symplectic structure of the system.
+            \item Update order: $P \to XP \to PP \to XX \to X$.
+        \end{itemize}
+        \item \textbf{Lyapunov Calculation:} Renormalize-and-sum procedure.
+        \begin{equation*}
+            \lambda_L \approx \frac{1}{n \Delta t} \sum_{i=1}^n \ln \left( \frac{|\delta \xi(t_i)|}{|\delta \xi(0)|} \right)
+        \end{equation*}
+       % 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Computational Methods: Integration Scheme}
+    The integration scheme is given by the following equations:
+    \begin{align*}
+        \braket{P}_{n+1}  &= \braket{P}_n \;\;\,+ h F^{(2)}\left(\braket{X}_n, \braket{\braket{XX}}_n\right)\\
+        \braket{XP}_{n+1} &= \braket{XP}_n + h F^{(4)}\left(\braket{X}_n, \braket{\braket{XX}}_n, \braket{\braket{PP}}_n\right)\\
+        \braket{PP}_{n+1} &= \braket{PP}_n + h F^{(5)}\left(\braket{X}_n, \braket{\braket{XX}}_n, \braket{\braket{XP}}_{n+1}\right)\\
+        \braket{XX}_{n+1} &= \braket{XX}_n + h F^{(3)}\left(\braket{\braket{XP}}_{n+1}\right)\\
+        \braket{X}_{n+1}  &= \braket{X}_n \;\;\, + h F^{(1)}\left(\braket{P}_{n+1}\right)
+    \end{align*}
+    This leads to the better conservation of the symplectic structure of the system compared to the Runge-Kutta method.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Computational Methods: Lyapunov Calculation}
+    \begin{columns}[T] % [T] aligns both columns at the top
+        % left column: figure
+        \begin{column}{0.6\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{figures/lyapunov-exponents.png}
+            \captionof{figure}{Lyapunov Exponent Computation.}
+            \label{fig:lyap-comp}
+        \end{column}
+
+        % right column: itemize + align
+        \begin{column}{0.4\textwidth}
+            \begin{itemize}
+                \item Integrate two nearby trajectories
+                \item Measure their separation $\delta \xi(t)$
+                \item Renormalize and accumulate growth:
+            \end{itemize}
+            \vspace{1em} % small vertical gap
+        \end{column}
+    \end{columns}
+    \begin{align*}
+    \lambda_L = \lim_{t\to\infty} \frac{1}{t} 
+        \ln\frac{|\delta \xi(t)|}{|\delta \xi(0)|} \rightarrow  \lambda_L \approx \frac{1}{n\Delta t}
+        \sum_{i=1}^n \ln\frac{|\delta \xi(t_i)|}{|\delta \xi_{0}|}.
+    \end{align*}
+\end{frame}
+
+\begin{frame}
+    \frametitle{$\lambda_L$ vs Temperature}
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=1.05\linewidth]{figures/Lyapunov_vs_Temperature.png}
+        \caption{\texttt{\small}$\lambda_L$ vs Temperature for $N=3, R=0.5, \mu=1, \lambda=1/3$.}
+        \label{fig:lambda_L_vs_T}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Results: Lyapunov Exponents}
+    Calculations performed for $N=3, R=0.5, \mu=1, \lambda=1/3$ at varying temperatures.
+    
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Findings:}
+        \begin{itemize}
+            \item $\lambda_L$ is positive for $T \ge 0.1$, indicating \textbf{Chaos}.
+            \item $\lambda_L$ increases with temperature.
+            \item Results are consistent with the MSS bound.
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \begin{block}{Observation}
+            \begin{itemize}
+                \item Higher temperatures lead to faster divergence and increased stiffness in the system dynamics.
+                \item Increasing the matrix size $N$ lead to a less chaotic system due to t'Hooft scaling.
+            \end{itemize}
+        \end{block}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Results: Time Evolution}
+        \begin{figure}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=0.95\linewidth]{figures/Trace_T_1.png}
+            \caption{\texttt{\small}$T=1$}\label{fig:Trace_T_1}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=0.95\linewidth]{figures/Trace_T_10.png}
+            \caption{\texttt{\small}$T=10$}\label{fig:Trace_T_10}
+        \end{subfigure}
+        % \caption{Time evolution of $Tr(\langle XX \rangle)/N$ for $T=1$ and $T=10$.}
+        \end{figure}
+    \begin{itemize}
+        \item \textbf{Stability:} The maximum simulation time decreases as temperature increases due to the numerical instability of the system.
+        \item \textbf{Interpretation:} The system becomes more chaotic and stiff at high $T$.
+    \end{itemize}
+    % 
+\end{frame}
+
+% Section 6: Conclusion
+\section{Conclusion}
+
+\begin{frame}{Conclusion \& Future Work}
+    \textbf{Summary:}
+    \begin{itemize}
+        \item Developed a framework for real-time quantum dynamics of Matrix Models using Gaussian State Approximation.
+        \item Successfully implemented Symplectic Euler integration for coupled 1-point and 2-point correlators.
+        \item Verified chaotic nature ($\lambda_L > 0$) and thermal consistency.
+    \end{itemize}
+
+    \textbf{Future Outlook:}
+    \begin{itemize}
+        \item Further investigate the bosonic part of the BMN model (mass deformation of BFSS).
+        \item Investigate quantum information features (entanglement).
+    \end{itemize}
+\end{frame}
+
+\end{document}

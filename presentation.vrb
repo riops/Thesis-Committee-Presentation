@@ -1,0 +1,23 @@
+\frametitle{C++ Code Snippet (Equations of Motion)}
+\begin{lstlisting}[basicstyle=\fontsize{3.5}{10}\selectfont]
+std::vector<long double>
+averagedEquationsPolarizationBasisSymmetryReducedParallel( const std::vector<long double> &allVectors,
+    const std::vector<std::vector<double>> &H, long double mu, long double lambda, long double R, int N) {
+  //...
+#pragma omp parallel for collapse(3)
+  for (int lm1_int = 0; lm1_int < N * N; lm1_int++) {
+    for (int i_int = 1; i_int <= 2; i_int++) {
+      for (int lm2_int = 0; lm2_int < N * N; lm2_int++) {
+        //...
+        result[idx_ej_l1m1_l2m2] = XP[idx_ej_l1m1_l2m2];
+        result[CovMax + idx_ej_l1m1_l2m2] = -((std::pow(mu, 2) + l1 * (l1 + 1) / std::pow(R, 2)) *
+              XP[idx_ej_l1m1_l2m2]);
+        result[2 * CovMax + idx_ej_l1m1_l2m2] =
+            -((std::pow(mu, 2) + l1 * (l1 + 1) / std::pow(R, 2)) * XX[idx_ej_l1m1_l2m2]) +
+            PP[idx_ej_l1m1_l2m2];
+    //...
+        for (int h_index = 0; h_index < H.size(); h_index++) {
+          for (double k = 1; k <= 2; k++) {
+        //...
+}
+    \end{lstlisting}
