@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{Introduction \& Motivation}{3}{0}{1}
+\beamer@sectionintoc {2}{Bosonic Model}{7}{0}{2}
+\beamer@sectionintoc {3}{Thermodynamics}{13}{0}{3}
+\beamer@sectionintoc {4}{Dynamics}{22}{0}{4}
+\beamer@sectionintoc {5}{Entanglement}{27}{0}{5}
+\beamer@sectionintoc {6}{BMN Model}{31}{0}{6}
+\beamer@sectionintoc {7}{Conclusion}{38}{0}{7}
